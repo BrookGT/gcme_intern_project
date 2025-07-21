@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAuth } from "../../../lib/AuthContext";
+import { useAuth } from "@/lib/AuthContext";
+import Button from "@/components/atoms/Button";
+import { Input } from "@/components/atoms/Input";
 
 export default function SignUpPage() {
     const [name, setName] = useState("");
@@ -65,11 +67,13 @@ export default function SignUpPage() {
                     <label className="block text-sm font-medium text-gray-800">
                         Name (optional)
                     </label>
-                    <input
+                    <Input
                         type="text"
-                        className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-black placeholder-gray-500"
+                        className="focus:ring-blue-400"
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setName(e.target.value)
+                        }
                         disabled={isLoading}
                     />
                 </div>
@@ -77,11 +81,13 @@ export default function SignUpPage() {
                     <label className="block text-sm font-medium text-gray-800">
                         Email
                     </label>
-                    <input
+                    <Input
                         type="email"
-                        className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-black placeholder-gray-500"
+                        className="focus:ring-blue-400"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setEmail(e.target.value)
+                        }
                         required
                         disabled={isLoading}
                     />
@@ -90,11 +96,13 @@ export default function SignUpPage() {
                     <label className="block text-sm font-medium text-gray-800">
                         Password
                     </label>
-                    <input
+                    <Input
                         type="password"
-                        className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-black placeholder-gray-500"
+                        className="focus:ring-blue-400"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setPassword(e.target.value)
+                        }
                         required
                         disabled={isLoading}
                     />
@@ -104,13 +112,14 @@ export default function SignUpPage() {
                         {error}
                     </div>
                 )}
-                <button
+                <Button
                     type="submit"
-                    className="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 text-white font-semibold rounded-lg shadow-md transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    variant="secondary"
+                    className="w-full py-3"
                     disabled={isLoading}
                 >
                     {isLoading ? "Signing Up..." : "Sign Up"}
-                </button>
+                </Button>
             </form>
             <div className="mt-4 text-center text-sm text-gray-700">
                 Already have an account?{" "}

@@ -1,7 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import { useAuth } from "../../../lib/AuthContext";
+import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
+import Button from "@/components/atoms/Button";
+import { Input, TextArea } from "@/components/atoms/Input";
 
 export default function CreatePostPage() {
     const [title, setTitle] = useState("");
@@ -58,11 +60,12 @@ export default function CreatePostPage() {
                     <label className="block text-sm font-medium text-gray-800">
                         Title
                     </label>
-                    <input
+                    <Input
                         type="text"
-                        className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 bg-white text-black placeholder-gray-500"
                         value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setTitle(e.target.value)
+                        }
                         required
                         disabled={isLoading}
                     />
@@ -71,10 +74,11 @@ export default function CreatePostPage() {
                     <label className="block text-sm font-medium text-gray-800">
                         Content
                     </label>
-                    <textarea
-                        className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 bg-white text-black placeholder-gray-500"
+                    <TextArea
                         value={content}
-                        onChange={(e) => setContent(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                            setContent(e.target.value)
+                        }
                         rows={6}
                         required
                         disabled={isLoading}
@@ -86,7 +90,9 @@ export default function CreatePostPage() {
                         id="published"
                         className="h-5 w-5 rounded"
                         checked={published}
-                        onChange={(e) => setPublished(e.target.checked)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setPublished(e.target.checked)
+                        }
                         disabled={isLoading}
                     />
                     <label
@@ -101,13 +107,14 @@ export default function CreatePostPage() {
                         {error}
                     </div>
                 )}
-                <button
+                <Button
                     type="submit"
-                    className="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-teal-500 hover:from-green-700 hover:to-teal-600 text-white font-semibold rounded-lg shadow-md transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    variant="secondary"
+                    className="w-full py-3"
                     disabled={isLoading}
                 >
                     {isLoading ? "Creating..." : "Create Post"}
-                </button>
+                </Button>
             </form>
         </div>
     );

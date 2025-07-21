@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../lib/AuthContext";
 import { useRouter } from "next/navigation";
+import PostCard from "@/components/molecules/PostCard";
 
 interface Post {
     id: number;
@@ -118,43 +119,12 @@ export default function MyPostsPage() {
             ) : (
                 <div className="grid gap-6">
                     {posts.map((post) => (
-                        <div
+                        <PostCard
                             key={post.id}
-                            className="bg-white/70 backdrop-blur-md rounded-xl shadow p-6 flex flex-col gap-2 border border-white/30"
-                        >
-                            <div className="flex justify-between items-center">
-                                <h3 className="text-2xl font-semibold text-gray-900">
-                                    {post.title}
-                                </h3>
-                                <span
-                                    className={`text-sm px-3 py-1 rounded-full font-medium ${
-                                        post.published
-                                            ? "bg-green-100 text-green-800"
-                                            : "bg-yellow-100 text-yellow-800"
-                                    }`}
-                                >
-                                    {post.published ? "Published" : "Draft"}
-                                </span>
-                            </div>
-                            <p className="text-gray-700 mt-2">
-                                {post.content.substring(0, 150)}
-                                {post.content.length > 150 ? "..." : ""}
-                            </p>
-                            <div className="flex gap-4 mt-4 self-end">
-                                <Link
-                                    href={`/posts/edit/${post.id}`}
-                                    className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow"
-                                >
-                                    Edit
-                                </Link>
-                                <button
-                                    onClick={() => handleDelete(post.id)}
-                                    className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
+                            post={post}
+                            isMyPost={true}
+                            onDelete={handleDelete}
+                        />
                     ))}
                 </div>
             )}

@@ -1,10 +1,17 @@
-import Link from "next/link";
+"use client";
+import { useAuth } from "../../lib/AuthContext";
 
 export default function HomePage() {
+    const { user } = useAuth();
+
+    const welcomeMessage = user?.name
+        ? `Welcome, ${user.name}!`
+        : "Welcome to GCME Blog!";
+
     return (
         <div className="backdrop-blur-lg bg-white/60 border border-white/30 shadow-2xl p-12 rounded-2xl max-w-xl w-full flex flex-col items-center glass-effect">
             <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-700 via-blue-700 to-green-600 mb-4 drop-shadow-lg">
-                Welcome to GCME Blog!
+                {welcomeMessage}
             </h1>
             <p className="text-lg text-gray-800 mb-8 text-center font-medium">
                 Share your thoughts, read posts, and connect with others in a

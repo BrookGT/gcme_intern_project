@@ -12,6 +12,7 @@ import { jwtDecode } from "jwt-decode";
 interface AuthContextType {
     token: string | null;
     user: { email: string; name?: string; sub?: number } | null;
+    isLoading: boolean; // Add loading state
     login: (token: string) => void;
     logout: () => void;
     isTokenExpired: () => boolean;
@@ -41,6 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         name?: string;
         sub?: number;
     } | null>(null);
+    const [isLoading, setIsLoading] = useState(true); // Initialize loading state
     const router = useRouter();
 
     const isTokenExpired = useCallback(() => {
@@ -60,23 +62,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, [router]);
 
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedToken = localStorage.getItem("jwt_token");
-            if (storedToken) {
-                const decoded = decodeToken(storedToken);
-                if (decoded && !isTokenExpired()) {
-                    setToken(storedToken);
-                    setUser({
-                        email: decoded.email,
-                        name: decoded.name,
-                        sub: decoded.sub,
-                    });
-                } else {
-                    logout();
+        try {
+            if (typeof window !== "undefined") {
+                const storedToken = localStorage.getItem("jwt_token");
+                if (storedToken) {
+                    const decoded = decodeToken(storedToken);
+                    if (decoded && Date.now() < decoded.exp * 1000) {
+                        setToken(storedToken);
+                        setUser({
+                            email: decoded.email,
+                            name: decoded.name,
+                            sub: decoded.sub,
+                        });
+                    } else {
+                        localStorage.removeItem("jwt_token");
+                    }
                 }
             }
+        } catch (error) {
+            console.error("Session check failed:", error);
+        } finally {
+            setIsLoading(false); // Finish loading
         }
-    }, [isTokenExpired, logout]);
+    }, []);
 
     const login = (newToken: string) => {
         const decoded = decodeToken(newToken);
@@ -96,7 +104,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <AuthContext.Provider
-            value={{ token, user, login, logout, isTokenExpired }}
+            value={{ token, user, isLoading, login, logout, isTokenExpired }}
         >
             {children}
         </AuthContext.Provider>

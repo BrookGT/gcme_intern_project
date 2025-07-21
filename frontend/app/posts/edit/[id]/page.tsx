@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../../../lib/AuthContext";
+import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
+import Button from "@/components/atoms/Button";
+import { Input, TextArea } from "@/components/atoms/Input";
 
 interface Post {
     id: number;
@@ -117,11 +119,13 @@ export default function EditPostPage({
                     <label className="block text-sm font-medium text-gray-800">
                         Title
                     </label>
-                    <input
+                    <Input
                         type="text"
-                        className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white text-black placeholder-gray-500"
+                        className="focus:ring-yellow-400"
                         value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setTitle(e.target.value)
+                        }
                         required
                         disabled={isLoading}
                     />
@@ -130,10 +134,12 @@ export default function EditPostPage({
                     <label className="block text-sm font-medium text-gray-800">
                         Content
                     </label>
-                    <textarea
-                        className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 bg-white text-black placeholder-gray-500"
+                    <TextArea
+                        className="focus:ring-yellow-400"
                         value={content}
-                        onChange={(e) => setContent(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                            setContent(e.target.value)
+                        }
                         rows={6}
                         required
                         disabled={isLoading}
@@ -145,7 +151,9 @@ export default function EditPostPage({
                         id="published"
                         className="h-5 w-5 rounded"
                         checked={published}
-                        onChange={(e) => setPublished(e.target.checked)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setPublished(e.target.checked)
+                        }
                         disabled={isLoading}
                     />
                     <label
@@ -160,13 +168,14 @@ export default function EditPostPage({
                         {error}
                     </div>
                 )}
-                <button
+                <Button
                     type="submit"
-                    className="w-full py-3 px-4 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold rounded-lg shadow-md transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    variant="warning"
+                    className="w-full py-3"
                     disabled={isLoading}
                 >
                     {isLoading ? "Saving..." : "Save Changes"}
-                </button>
+                </Button>
             </form>
         </div>
     );
