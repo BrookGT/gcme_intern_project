@@ -1,6 +1,6 @@
 import "./globals.css";
-import ClientRootLayoutWrapper from "../components/ClientRootLayoutWrapper";
-import { AuthProvider } from "../lib/AuthContext";
+import { AuthProvider } from "@/authcontext/AuthContext";
+import ClientRootLayoutWrapper from "@/components/layout/ClientRootLayoutWrapper";
 
 export const metadata = {
     title: "GCME Blog App",
@@ -14,7 +14,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className="bg-gray-50 min-h-screen flex flex-col">
+            <body>
                 <AuthProvider>
                     <ClientRootLayoutWrapper>
                         {children}

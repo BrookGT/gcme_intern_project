@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAuth } from "@/lib/AuthContext";
-import Button from "@/components/atoms/Button";
-import { Input } from "@/components/atoms/Input";
+import { useAuth } from "@/authcontext/AuthContext";
+import Button from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 
 export default function SignInPage() {
     const [email, setEmail] = useState("");
@@ -24,30 +24,13 @@ export default function SignInPage() {
         }
 
         try {
-            const response = await fetch("http://localhost:3001/auth/signin", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data.message || "Failed to sign in. Please try again."
-                );
-            }
-
-            // The login function from AuthContext will handle the token and redirect
-            if (data.access_token) {
-                login(data.access_token);
-            } else {
-                throw new Error("Login failed: No access token received.");
-            }
+            await login(email, password);
         } catch (err: any) {
-            setError(err.message);
+            setError(
+                err?.response?.data?.message ||
+                    err.message ||
+                    "Failed to sign in. Please try again."
+            );
         } finally {
             setIsLoading(false);
         }

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../lib/AuthContext";
+import { useAuth } from "@/authcontext/AuthContext";
 import React from "react";
 
 interface Post {

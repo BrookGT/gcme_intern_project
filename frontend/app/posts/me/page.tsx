@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../lib/AuthContext";
+import { useAuth } from "@/authcontext/AuthContext";
 import { useRouter } from "next/navigation";
-import PostCard from "@/components/molecules/PostCard";
+import PostCard from "@/components/posts/PostCard";
+import ProtectedPage from "@/components/layout/ProtectedPage";
 
 interface Post {
     id: number;
@@ -14,27 +15,25 @@ interface Post {
 
 export default function MyPostsPage() {
     const [posts, setPosts] = useState<Post[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingPosts, setIsLoadingPosts] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { token } = useAuth();
+    const { isLoading } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
-        if (!token) {
-            router.push("/auth/signin");
-            return;
-        }
+        if (isLoading) return; // Wait for session check
+        // No need to check token, cookie is used
 
         const fetchMyPosts = async () => {
             try {
                 const response = await fetch("http://localhost:3001/posts/me", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    credentials: "include",
                 });
 
                 if (response.status === 401) {
-                    throw new Error("Unauthorized. Please log in again.");
+                    // Redirect to signin if unauthorized
+                    router.replace("/auth/signin");
+                    return;
                 }
                 if (!response.ok) {
                     throw new Error("Failed to fetch your posts.");
@@ -45,18 +44,15 @@ export default function MyPostsPage() {
             } catch (err: any) {
                 setError(err.message);
             } finally {
-                setIsLoading(false);
+                setIsLoadingPosts(false);
             }
         };
 
         fetchMyPosts();
-    }, [token, router]);
+    }, [isLoading, router]);
 
     const handleDelete = async (id: number) => {
-        if (!token) {
-            setError("Authentication error.");
-            return;
-        }
+        // No need to check token, cookie is used
 
         if (
             window.confirm(
@@ -68,9 +64,7 @@ export default function MyPostsPage() {
                     `http://localhost:3001/posts/${id}`,
                     {
                         method: "DELETE",
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
+                        credentials: "include",
                     }
                 );
 
@@ -85,7 +79,7 @@ export default function MyPostsPage() {
         }
     };
 
-    if (isLoading) {
+    if (isLoading || isLoadingPosts) {
         return (
             <div className="text-center text-xl font-semibold">
                 Loading your posts...
@@ -94,6 +88,8 @@ export default function MyPostsPage() {
     }
 
     if (error) {
+        // If error is unauthorized, don't show error (already redirected)
+        if (error === "Unauthorized. Please log in again.") return null;
         return (
             <div className="text-center text-xl font-semibold text-red-500">
                 Error: {error}
@@ -102,32 +98,34 @@ export default function MyPostsPage() {
     }
 
     return (
-        <div className="w-full max-w-4xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-                <h2 className="text-3xl font-bold text-black">My Posts</h2>
-                <Link
-                    href="/posts/create"
-                    className="bg-gradient-to-r from-green-600 to-teal-500 hover:from-green-700 hover:to-teal-600 text-white px-5 py-2 rounded-lg font-semibold shadow-md transition"
-                >
-                    Create New Post
-                </Link>
+        <ProtectedPage>
+            <div className="w-full max-w-4xl mx-auto">
+                <div className="flex justify-between items-center mb-8">
+                    <h2 className="text-3xl font-bold text-black">My Posts</h2>
+                    <Link
+                        href="/posts/create"
+                        className="bg-gradient-to-r from-green-600 to-teal-500 hover:from-green-700 hover:to-teal-600 text-white px-5 py-2 rounded-lg font-semibold shadow-md transition"
+                    >
+                        Create New Post
+                    </Link>
+                </div>
+                {posts.length === 0 ? (
+                    <div className="text-center text-gray-700 font-medium bg-white/60 p-8 rounded-xl shadow">
+                        You haven't created any posts yet.
+                    </div>
+                ) : (
+                    <div className="grid gap-6">
+                        {posts.map((post) => (
+                            <PostCard
+                                key={post.id}
+                                post={post}
+                                isMyPost={true}
+                                onDelete={handleDelete}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
-            {posts.length === 0 ? (
-                <div className="text-center text-gray-700 font-medium bg-white/60 p-8 rounded-xl shadow">
-                    You haven't created any posts yet.
-                </div>
-            ) : (
-                <div className="grid gap-6">
-                    {posts.map((post) => (
-                        <PostCard
-                            key={post.id}
-                            post={post}
-                            isMyPost={true}
-                            onDelete={handleDelete}
-                        />
-                    ))}
-                </div>
-            )}
-        </div>
+        </ProtectedPage>
     );
 }

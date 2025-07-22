@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAuth } from "@/lib/AuthContext";
-import Button from "@/components/atoms/Button";
-import { Input } from "@/components/atoms/Input";
+import { useAuth } from "@/authcontext/AuthContext";
+import Button from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 
 export default function SignUpPage() {
     const [name, setName] = useState("");
@@ -11,7 +11,7 @@ export default function SignUpPage() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuth();
+    const { login, signup } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -25,33 +25,13 @@ export default function SignUpPage() {
         }
 
         try {
-            const response = await fetch("http://localhost:3001/auth/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    name: name || undefined,
-                    email,
-                    password,
-                }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data.message || "Failed to sign up. Please try again."
-                );
-            }
-
-            if (data.access_token) {
-                login(data.access_token);
-            } else {
-                throw new Error("Sign up failed: No access token received.");
-            }
+            await signup(email, password, name);
         } catch (err: any) {
-            setError(err.message);
+            setError(
+                err?.response?.data?.message ||
+                    err.message ||
+                    "Failed to sign up. Please try again."
+            );
         } finally {
             setIsLoading(false);
         }

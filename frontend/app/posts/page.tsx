@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import PostCard from "@/components/molecules/PostCard";
-import { useAuth } from "@/lib/AuthContext";
+import PostCard from "@/components/posts/PostCard";
+import { useAuth } from "@/authcontext/AuthContext";
 
 interface Post {
     id: number;

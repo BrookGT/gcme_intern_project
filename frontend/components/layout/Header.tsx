@@ -1,8 +1,8 @@
-"use client";
+import React from "react";
 import Link from "next/link";
+import { useAuth } from "@/authcontext/AuthContext";
 import { usePathname } from "next/navigation";
 import { useCallback } from "react";
-import { useAuth } from "@/lib/AuthContext";
 
 export default function Header() {
     const pathname = usePathname();
@@ -59,7 +59,7 @@ export default function Header() {
                                 My Posts
                             </Link>
                             <button
-                                className="ml-2 px-3 py-1 rounded-lg font-medium bg-red-500 text-white shadow transition-all duration-200 hover:bg-red-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-400 border border-red-600"
+                                className="ml-2 px-3 py-1 rounded-lg font-medium bg-red-500 text-white shadow transition-all duration-200 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 border border-red-600"
                                 onClick={handleLogout}
                             >
                                 Logout

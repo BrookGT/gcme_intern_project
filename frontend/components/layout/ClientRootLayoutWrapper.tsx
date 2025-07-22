@@ -1,8 +1,8 @@
 "use client";
 import { usePathname } from "next/navigation";
-import MainLayout from "@/components/templates/MainLayout";
-import { useAuth } from "@/lib/AuthContext";
-import LoadingSpinner from "@/components/atoms/LoadingSpinner";
+import MainLayout from "@/components/layout/MainLayout";
+import { useAuth } from "@/authcontext/AuthContext";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function ClientRootLayoutWrapper({
     children,
@@ -15,13 +15,7 @@ export default function ClientRootLayoutWrapper({
         pathname.startsWith("/auth/signin") ||
         pathname.startsWith("/auth/signup");
 
-    if (isLoading) {
-        return <LoadingSpinner />;
-    }
-
-    if (isAuthPage) {
-        return <>{children}</>;
-    }
-
+    if (isLoading) return <LoadingSpinner />;
+    if (isAuthPage) return <>{children}</>;
     return <MainLayout>{children}</MainLayout>;
 }
