@@ -2,8 +2,9 @@
 import React, { useState } from "react";
 import { useAuth } from "@/authcontext/AuthContext";
 import { useRouter } from "next/navigation";
-import Button from "@/components/atoms/Button";
-import { Input, TextArea } from "@/components/atoms/Input";
+import Button from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+// If you have a TextArea component, import it from the correct location or create one if missing.
 
 export default function CreatePostPage() {
     const [title, setTitle] = useState("");
@@ -11,7 +12,7 @@ export default function CreatePostPage() {
     const [published, setPublished] = useState(false);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const { token } = useAuth();
+    const { user } = useAuth();
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -19,7 +20,7 @@ export default function CreatePostPage() {
         setError("");
         setIsLoading(true);
 
-        if (!token) {
+        if (!user) {
             setError("You must be logged in to create a post.");
             setIsLoading(false);
             router.push("/auth/signin");
@@ -31,8 +32,8 @@ export default function CreatePostPage() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
                 },
+                credentials: "include",
                 body: JSON.stringify({ title, content, published }),
             });
 
@@ -43,8 +44,12 @@ export default function CreatePostPage() {
 
             // On success, redirect to the posts page
             router.push("/posts");
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("An unexpected error occurred.");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -74,7 +79,8 @@ export default function CreatePostPage() {
                     <label className="block text-sm font-medium text-gray-800">
                         Content
                     </label>
-                    <TextArea
+                    <textarea
+                        className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-black bg-white"
                         value={content}
                         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                             setContent(e.target.value)
